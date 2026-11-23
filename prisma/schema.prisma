@@ -1,0 +1,131 @@
+generator client {
+  previewFeatures = ["driverAdapters"]
+  provider      = "prisma-client-js"
+  engineType    = "wasm"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String   @default("")
+  permissions String   @default("[]")
+  users       User[]
+  createdAt   DateTime @default(now())
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  username     String         @unique
+  passwordHash String
+  roleId       String
+  role         Role           @relation(fields: [roleId], references: [id])
+  assignees    TaskAssignee[]
+  comments     Comment[]
+  activities   Activity[]
+  notifications Notification[]
+  createdAt    DateTime       @default(now())
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  client      String
+  description String   @default("")
+  tasks       Task[]
+  createdAt   DateTime @default(now())
+}
+
+model Task {
+  id          String         @id @default(cuid())
+  title       String
+  description String         @default("")
+  state       String         @default("جديدة")
+  priority    String         @default("متوسطة")
+  deadline    DateTime?
+  projectId   String
+  project     Project        @relation(fields: [projectId], references: [id])
+  createdBy   String         @default("")
+  assignees   TaskAssignee[]
+  comments    Comment[]
+  links       AttachmentLink[]
+  activities  Activity[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model TaskAssignee {
+  id     String @id @default(cuid())
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([taskId, userId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  kind      String   @default("comment")
+  createdAt DateTime @default(now())
+}
+
+model AttachmentLink {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model Template {
+  id          String         @id @default(cuid())
+  name        String
+  description String         @default("")
+  steps       TemplateStep[]
+  createdAt   DateTime       @default(now())
+}
+
+model TemplateStep {
+  id         String   @id @default(cuid())
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  title      String
+  order      Int
+  daysOffset Int      @default(1)
+  priority   String   @default("متوسطة")
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  detail    String   @default("")
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  text      String
+  taskId    String   @default("")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
