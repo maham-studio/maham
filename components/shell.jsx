@@ -4,18 +4,18 @@ import { getCurrentUser, can } from '../lib/auth';
 import { logout } from '../lib/actions';
 import { db } from '../lib/db';
 import { sweepReminders } from '../lib/notify';
-import { Avatar } from './ui';
+import { Avatar, Icon } from './ui';
 
 const ITEMS = [
-  { href: '/tasks', icon: '✓', label: 'مهامي' },
-  { href: '/notifications', icon: '🔔', label: 'الإشعارات' },
+  { href: '/tasks', icon: 'tasks', label: 'مهامي' },
+  { href: '/notifications', icon: 'bell', label: 'الإشعارات' },
 ];
 const ADMIN_ITEMS = [
-  { href: '/admin', icon: '📊', label: 'لوحة التحكم', perm: 'view_all_tasks' },
-  { href: '/admin/projects', icon: '🗂', label: 'المشاريع', perm: 'manage_projects' },
-  { href: '/admin/templates', icon: '📋', label: 'القوالب', perm: 'manage_templates' },
-  { href: '/admin/users', icon: '👥', label: 'المستخدمون', perm: 'manage_users' },
-  { href: '/admin/roles', icon: '🛡', label: 'الأدوار', perm: 'manage_roles' },
+  { href: '/admin', icon: 'grid', label: 'لوحة التحكم', perm: 'view_all_tasks' },
+  { href: '/admin/projects', icon: 'folder', label: 'المشاريع', perm: 'manage_projects' },
+  { href: '/admin/templates', icon: 'clipboard', label: 'القوالب', perm: 'manage_templates' },
+  { href: '/admin/users', icon: 'users', label: 'المستخدمون', perm: 'manage_users' },
+  { href: '/admin/roles', icon: 'shield', label: 'الأدوار', perm: 'manage_roles' },
 ];
 
 export default async function Shell({ children, active }) {
@@ -27,7 +27,8 @@ export default async function Shell({ children, active }) {
 
   const NavLink = ({ item }) => (
     <Link key={item.href} href={item.href} className={`nav-item ${active === item.href ? 'active' : ''}`}>
-      <span className="icon">{item.icon}</span>{item.label}
+      <span className="icon"><Icon name={item.icon} size={19} /></span>
+      <span className="nav-label">{item.label}</span>
       {item.href === '/notifications' && unread > 0 && <span className="nav-badge">{unread}</span>}
     </Link>
   );
@@ -47,15 +48,23 @@ export default async function Shell({ children, active }) {
         <div className="sidebar-user">
           <Avatar name={user.name} />
           <div><div className="name">{user.name}</div><div className="role">{user.role.name}</div></div>
-          <form action={logout}><button className="logout-btn" title="تسجيل الخروج">⎋</button></form>
+          <form action={logout}><button className="logout-btn" title="تسجيل الخروج"><Icon name="logout" size={18} /></button></form>
         </div>
       </aside>
       <div className="main">
         <div className="topbar">
-          <div className="brand-logo" style={{ width: 32, height: 32, fontSize: '1rem' }}>م</div>
-          <strong>مهام</strong>
-          <span style={{ marginInlineStart: 'auto', fontSize: '.85rem', color: '#cbd5e1' }}>{user.name}</span>
-          <form action={logout}><button className="logout-btn" style={{ color: '#cbd5e1' }}>⎋</button></form>
+          <div className="topbar-brand">
+            <div className="brand-logo" style={{ width: 34, height: 34, fontSize: '1.05rem', borderRadius: 11 }}>م</div>
+            <strong>مهام</strong>
+          </div>
+          <div className="topbar-actions">
+            <Link href="/notifications" className="icon-btn" aria-label="الإشعارات">
+              <Icon name="bell" size={20} />
+              {unread > 0 && <span className="nav-badge">{unread}</span>}
+            </Link>
+            <Avatar name={user.name} size={33} />
+            <form action={logout}><button className="icon-btn" title="تسجيل الخروج" aria-label="تسجيل الخروج"><Icon name="logout" size={18} /></button></form>
+          </div>
         </div>
         <main className="content">{children}</main>
       </div>

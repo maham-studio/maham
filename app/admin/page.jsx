@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { db } from '../../lib/db';
 import Shell from '../../components/shell';
-import { StateBadge, PriorityTag, Avatar, fmtDate, isOverdue } from '../../components/ui';
+import { StateBadge, PriorityTag, Avatar, Icon, fmtDate, isOverdue } from '../../components/ui';
 import { STATES, PRIORITIES } from '../../lib/constants';
+
+const STAT_META = {
+  'جديدة': { icon: 'sparkles', bg: '#e0f2fe', fg: '#0284c7' },
+  'قيد التنفيذ': { icon: 'gear', bg: '#fef3c7', fg: '#d97706' },
+  'مستنية مراجعة': { icon: 'eye', bg: '#ede9fe', fg: '#7c3aed' },
+  'عندها تعديلات': { icon: 'undo', bg: '#ffe4e6', fg: '#e11d48' },
+  'مكتملة': { icon: 'check', bg: '#dcfce7', fg: '#16a34a' },
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -34,13 +42,13 @@ export default async function AdminDashboard({ searchParams }) {
           <div className="page-title">لوحة التحكم</div>
           <div className="page-sub">كل مهام الاستوديو في نظرة واحدة</div>
         </div>
-        <Link href="/admin/tasks/new" className="btn btn-primary">+ مهمة جديدة</Link>
+        <Link href="/admin/tasks/new" className="btn btn-primary"><Icon name="plus" size={16} /> مهمة جديدة</Link>
       </div>
       <div className="stats">
         {STATES.map(s => (
           <Link key={s} href={state === s ? qs('state') : qs('state', s)} className="stat" style={state === s ? { borderColor: 'var(--primary)', boxShadow: '0 0 0 2px rgba(79,70,229,.15)' } : {}}>
-            <div className="stat-icon" style={{ background: { 'جديدة': '#e0f2fe', 'قيد التنفيذ': '#fef3c7', 'مستنية مراجعة': '#ede9fe', 'عندها تعديلات': '#ffe4e6', 'مكتملة': '#dcfce7' }[s] }}>
-              {{ 'جديدة': '🆕', 'قيد التنفيذ': '⚙️', 'مستنية مراجعة': '👀', 'عندها تعديلات': '🔧', 'مكتملة': '✅' }[s]}
+            <div className="stat-icon" style={{ background: STAT_META[s].bg, color: STAT_META[s].fg }}>
+              <Icon name={STAT_META[s].icon} size={21} />
             </div>
             <div><div className="stat-num">{counts[s]}</div><div className="stat-label">{s}</div></div>
           </Link>
@@ -68,7 +76,7 @@ export default async function AdminDashboard({ searchParams }) {
           <tbody>
             {tasks.map(t => (
               <tr key={t.id}>
-                <td><Link href={`/tasks/${t.id}`} style={{ fontWeight: 700 }}>{t.title}</Link>{t._count.comments > 0 && <span style={{ color: 'var(--text-3)', fontSize: '.76rem' }}> 💬{t._count.comments}</span>}</td>
+                <td><Link href={`/tasks/${t.id}`} style={{ fontWeight: 700 }}>{t.title}</Link>{t._count.comments > 0 && <span style={{ color: 'var(--text-3)', fontSize: '.76rem', display: 'inline-flex', alignItems: 'center', gap: 3, marginInlineStart: 6 }}><Icon name="message" size={12} />{t._count.comments}</span>}</td>
                 <td style={{ color: 'var(--text-2)' }}>{t.project.client}</td>
                 <td><span className="avatars">{t.assignees.map(a => <Avatar key={a.userId} name={a.user.name} />)}</span></td>
                 <td><StateBadge state={t.state} /></td>
@@ -77,7 +85,7 @@ export default async function AdminDashboard({ searchParams }) {
                 <td><Link href={`/tasks/${t.id}`} className="btn btn-ghost btn-sm">فتح</Link></td>
               </tr>
             ))}
-            {!tasks.length && <tr><td colSpan={7}><div className="empty"><div className="big">🗒</div>لا مهام مطابقة للتصفية</div></td></tr>}
+            {!tasks.length && <tr><td colSpan={7}><div className="empty"><div className="big"><Icon name="clipboard" size={28} /></div>لا مهام مطابقة للتصفية</div></td></tr>}
           </tbody>
         </table>
       </div>

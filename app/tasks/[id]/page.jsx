@@ -6,7 +6,7 @@ import { addComment, addLink } from '../../../lib/actions';
 import Shell from '../../../components/shell';
 import StateActions from '../../../components/state-actions';
 import { Form, SubmitButton } from '../../../components/form';
-import { StateBadge, PriorityTag, Avatar, fmtDate, fmtDateTime, isOverdue } from '../../../components/ui';
+import { StateBadge, PriorityTag, Avatar, Icon, fmtDate, fmtDateTime, isOverdue } from '../../../components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,19 +44,19 @@ export default async function TaskPage({ params }) {
       <div className="detail-grid">
         <div>
           <div className="card card-pad" style={{ marginBottom: 16 }}>
-            <div className="section-title">⚙️ إجراءات الحالة</div>
+            <div className="section-title"><Icon name="gear" size={18} /> إجراءات الحالة</div>
             <StateActions taskId={task.id} state={task.state} isAssignee={isAssignee} isReviewer={isReviewer} />
           </div>
           <div className="card card-pad" style={{ marginBottom: 16 }}>
-            <div className="section-title">📝 الوصف</div>
+            <div className="section-title"><Icon name="text" size={18} /> الوصف</div>
             <p style={{ color: 'var(--text-2)', whiteSpace: 'pre-wrap' }}>{task.description || 'بدون وصف'}</p>
           </div>
           <div className="card card-pad" style={{ marginBottom: 16 }}>
-            <div className="section-title">💬 التعليقات ({task.comments.length})</div>
+            <div className="section-title"><Icon name="message" size={18} /> التعليقات ({task.comments.length})</div>
             {task.comments.map(c => (
               <div key={c.id} className={`comment ${c.kind === 'revision' ? 'revision' : ''}`}>
                 <div className="head">
-                  <span className="who">{c.kind === 'revision' ? '↩ تعديلات مطلوبة · ' : ''}{c.user.name}</span>
+                  <span className="who">{c.kind === 'revision' && <Icon name="undo" size={13} className="rev-ic" />}{c.kind === 'revision' ? 'تعديلات مطلوبة · ' : ''}{c.user.name}</span>
                   <span className="when">{fmtDateTime(c.createdAt)}</span>
                 </div>
                 <div style={{ fontSize: '.92rem' }}>{c.body}</div>
@@ -70,7 +70,7 @@ export default async function TaskPage({ params }) {
             </Form>
           </div>
           <div className="card card-pad">
-            <div className="section-title">🕓 سجل النشاط</div>
+            <div className="section-title"><Icon name="clock" size={18} /> سجل النشاط</div>
             <div className="timeline">
               {task.activities.map(a => (
                 <div key={a.id} className="timeline-item">
@@ -87,7 +87,7 @@ export default async function TaskPage({ params }) {
         </div>
         <div>
           <div className="card card-pad" style={{ marginBottom: 16 }}>
-            <div className="section-title">ℹ️ التفاصيل</div>
+            <div className="section-title"><Icon name="info" size={18} /> التفاصيل</div>
             <div style={{ display: 'grid', gap: 12, fontSize: '.9rem' }}>
               <div><div className="label">موعد التسليم</div>{task.deadline ? <span className={isOverdue(task) ? 'overdue' : ''}>{isOverdue(task) ? 'متأخرة · ' : ''}{fmtDate(task.deadline)}</span> : '—'}</div>
               <div><div className="label">المسند إليهم</div>
@@ -100,10 +100,10 @@ export default async function TaskPage({ params }) {
             </div>
           </div>
           <div className="card card-pad">
-            <div className="section-title">🔗 روابط المرفقات</div>
+            <div className="section-title"><Icon name="link" size={18} /> روابط المرفقات</div>
             {task.links.map(l => (
               <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="link-item">
-                <span className="ic">↗</span>
+                <span className="ic"><Icon name="open" size={16} /></span>
                 <span style={{ fontWeight: 600, fontSize: '.88rem' }}>{l.title}</span>
               </a>
             ))}

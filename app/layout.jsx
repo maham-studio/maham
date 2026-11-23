@@ -1,8 +1,8 @@
-import { Tajawal } from 'next/font/google';
+import { Cairo } from 'next/font/google';
 import './globals.css';
 import Pwa from '../components/pwa';
 
-const tajawal = Tajawal({ subsets: ['arabic'], weight: ['400', '500', '700', '800'], variable: '--font-tajawal' });
+const cairo = Cairo({ subsets: ['arabic'], weight: ['400', '600', '700', '800', '900'], variable: '--font-cairo' });
 
 export const metadata = {
   title: 'مهام | إدارة مهام الاستوديو',
@@ -13,7 +13,7 @@ export const viewport = { themeColor: '#0f172a' };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" dir="rtl" className={tajawal.variable}>
+    <html lang="ar" dir="rtl" className={cairo.variable}>
       <body><Pwa />{children}</body>
     </html>
   );

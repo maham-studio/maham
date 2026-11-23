@@ -3,6 +3,7 @@ import { createTask, createFromTemplate } from '../../../../lib/actions';
 import Shell from '../../../../components/shell';
 import { Form, SubmitButton } from '../../../../components/form';
 import { PRIORITIES } from '../../../../lib/constants';
+import { Icon } from '../../../../components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export default async function NewTask() {
       <div className="page-head"><div><div className="page-title">مهمة جديدة</div><div className="page-sub">أنشئ مهمة يدويًا أو ولّد مجموعة مهام من قالب</div></div></div>
       <div className="detail-grid">
         <div className="card card-pad">
-          <div className="section-title">✏️ مهمة يدوية</div>
+          <div className="section-title"><Icon name="plus" size={18} /> مهمة يدوية</div>
           <Form action={createTask}>
             <div className="field"><label className="label">عنوان المهمة</label><input className="input" name="title" required placeholder="مثال: تصوير فيديو إعلاني" /></div>
             <div className="field"><label className="label">الوصف</label><textarea className="textarea" name="description" placeholder="تفاصيل المطلوب…" /></div>
@@ -39,7 +40,7 @@ export default async function NewTask() {
           </Form>
         </div>
         <div className="card card-pad">
-          <div className="section-title">📋 إنشاء من قالب</div>
+          <div className="section-title"><Icon name="clipboard" size={18} /> إنشاء من قالب</div>
           <Form action={createFromTemplate}>
             <div className="field"><label className="label">القالب</label>
               <select className="select" name="templateId" required>

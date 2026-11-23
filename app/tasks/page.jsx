@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { db } from '../../lib/db';
 import { getCurrentUser } from '../../lib/auth';
 import Shell from '../../components/shell';
-import { StateBadge, PriorityTag, Avatar, fmtDate, isOverdue } from '../../components/ui';
+import { StateBadge, PriorityTag, Avatar, Icon, fmtDate, isOverdue } from '../../components/ui';
 import { STATES } from '../../lib/constants';
 
 export const dynamic = 'force-dynamic';
@@ -42,8 +42,8 @@ export default async function MyTasks() {
                     <PriorityTag p={t.priority} />
                   </div>
                   <div className="task-meta">
-                    {t.deadline && <span className={`item ${isOverdue(t) ? 'overdue' : ''}`}>📅 {isOverdue(t) ? 'متأخرة · ' : ''}{fmtDate(t.deadline)}</span>}
-                    {t._count.comments > 0 && <span className="item">💬 {t._count.comments}</span>}
+                    {t.deadline && <span className={`item ${isOverdue(t) ? 'overdue' : ''}`}><Icon name="calendar" size={14} />{isOverdue(t) ? 'متأخرة · ' : ''}{fmtDate(t.deadline)}</span>}
+                    {t._count.comments > 0 && <span className="item"><Icon name="message" size={14} />{t._count.comments}</span>}
                     <span className="avatars" style={{ marginInlineStart: 'auto' }}>
                       {t.assignees.map(a => <Avatar key={a.userId} name={a.user.name} />)}
                     </span>
@@ -54,7 +54,7 @@ export default async function MyTasks() {
           </div>
         );
       })}
-      {!tasks.length && <div className="empty card"><div className="big">🎉</div>لا توجد مهام مسندة إليك حاليًا</div>}
+      {!tasks.length && <div className="empty card"><div className="big"><Icon name="sparkles" size={28} /></div>لا توجد مهام مسندة إليك حاليًا</div>}
     </Shell>
   );
 }
